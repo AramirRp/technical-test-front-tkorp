@@ -1,6 +1,7 @@
 import { useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
-import Navigation from "../../components/navigation";
+import Link from 'next/link';
+import Navigation from "../../components/Navigation";
 
 const GET_PERSON = gql`
   query GetPerson($id: Int!) {
@@ -10,6 +11,11 @@ const GET_PERSON = gql`
       lastName
       email
       phoneNumber
+      animals {
+        id
+        name
+        species
+      }
     }
   }
 `;
@@ -30,11 +36,26 @@ const PersonDetailPage = () => {
     <div>
       <Navigation />
       <h1 className="text-2xl font-bold mb-4">Person Details</h1>
-      <p>
-        Name: {person.firstName} {person.lastName}
-      </p>
-      <p>Email adress : {person.email}</p>
-      <p>Phone number : {person.phoneNumber}</p>
+      <p>Name: {person.firstName} {person.lastName}</p>
+      <p>Email address: {person.email}</p>
+      <p>Phone number: {person.phoneNumber}</p>
+      
+      <h2 className="text-xl font-bold mt-6 mb-2">Owned Animals</h2>
+      {person.animals.length > 0 ? (
+        <ul>
+          {person.animals.map((animal) => (
+            <li key={animal.id}>
+              <Link href={`/animals/${animal.id}`}>
+                <span className="text-blue-500 hover:underline cursor-pointer">
+                  {animal.name} ({animal.species})
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>This person doesn't own any animals.</p>
+      )}
     </div>
   );
 };
